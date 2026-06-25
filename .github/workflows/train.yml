@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # fetch-depth: 0 нужен, чтобы DVC мог сравнить текущую ветку с историей main
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -24,7 +23,7 @@ jobs:
           cache: 'pip'
 
       - name: Setup CML
-        uses: iterative/setup-cml@v2
+        uses: iterative/setup-cml@v1
 
       - name: Установка зависимостей
         run: pip install -r requirements.txt
@@ -47,5 +46,4 @@ jobs:
           dvc params diff main --md >> report.md
           echo "### Изменения метрик:" >> report.md
           dvc metrics diff main --md >> report.md
-          # Отправка отчета в Pull Request
           cml comment create report.md
