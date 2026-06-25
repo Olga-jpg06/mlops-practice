@@ -22,9 +22,6 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Setup CML
-        uses: iterative/setup-cml@v1
-
       - name: Установка зависимостей
         run: pip install -r requirements.txt
 
@@ -41,9 +38,17 @@ jobs:
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          pip install dvc
           echo "## Результаты эксперимента" > report.md
           echo "### Изменения параметров:" >> report.md
           dvc params diff main --md >> report.md
           echo "### Изменения метрик:" >> report.md
           dvc metrics diff main --md >> report.md
-          cml comment create report.md
+          
+          # Используем curl для отправки комментария вместо CML
+          COMMENT=$(cat report.md)
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
+            -d "{\"body\":\"$(cat report.md | sed 's/\"/\\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')\"}"
