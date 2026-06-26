@@ -27,7 +27,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USER: Olga-jpg06  # Замените на свой логин!
-          SPACE_NAME: iris-api-bazunova>  # Замените на имя спейса!
+          SPACE_NAME: iris-api-bazunova  # Замените на имя спейса!
         run: |
           # Настраиваем Git
           git config --global user.email "bot@github.actions"
